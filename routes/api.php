@@ -1,7 +1,6 @@
 <?php
 
 use Illuminate\Http\Request;
-
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -21,11 +20,11 @@ Route::group([
 });
 
 Route::middleware('auth:api')->group( function () {
-  Route::resource('galleries', GalleryController::class)->except([
-    'create', 'edit'
-  ]);
-});
 
+});
+Route::resource('galleries', GalleriesController::class)->except([
+  'create', 'edit'
+]);
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });

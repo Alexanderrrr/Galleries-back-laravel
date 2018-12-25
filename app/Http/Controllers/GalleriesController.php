@@ -24,7 +24,7 @@ class GalleriesController extends Controller
      */
     public function create()
     {
-        //
+
     }
 
     /**
@@ -35,7 +35,12 @@ class GalleriesController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $gallery = Gallery::create([
+          "name" => $request->name,
+          "description" => $request->description,
+          "user_id" => $request->user_id
+        ]);
+        return $gallery;
     }
 
     /**

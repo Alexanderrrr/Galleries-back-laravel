@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Gallery;
+use App\Image;
 use Illuminate\Http\Request;
+use App\Http\Requests\GalleryRequest;
 
 class GalleriesController extends Controller
 {
@@ -14,17 +16,7 @@ class GalleriesController extends Controller
      */
     public function index()
     {
-        return Gallery::all();
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-
+        return Gallery::latest()->paginate(10);
     }
 
     /**
@@ -35,11 +27,20 @@ class GalleriesController extends Controller
      */
     public function store(Request $request)
     {
+
         $gallery = Gallery::create([
           "name" => $request->name,
           "description" => $request->description,
           "user_id" => $request->user_id
         ]);
+        $imagesRequest = $request->input('images');
+        $images = [];
+
+        foreach($imagesRequest as $image){
+          $newImage = new Image($image);
+          $images[] = $newImage;
+        }
+        $gallery->images()->saveMany($images);
         return $gallery;
     }
 
@@ -51,19 +52,9 @@ class GalleriesController extends Controller
      */
     public function show(Gallery $gallery)
     {
-        //
+        return $gallery;
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Gallery  $gallery
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Gallery $gallery)
-    {
-        //
-    }
 
     /**
      * Update the specified resource in storage.
@@ -85,6 +76,8 @@ class GalleriesController extends Controller
      */
     public function destroy(Gallery $gallery)
     {
-        //
+        $gallery->delete();
+        return $gallery;
+
     }
 }

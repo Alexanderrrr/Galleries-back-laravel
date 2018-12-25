@@ -23,7 +23,7 @@ Route::middleware('auth:api')->group( function () {
 
 });
 Route::resource('galleries', GalleriesController::class)->except([
-  'create', 'edit'
+  'create', 'edit',
 ]);
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();

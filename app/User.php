@@ -29,6 +29,14 @@ class User extends Authenticatable implements JWTSubject
         'password', 'remember_token',
     ];
 
+    public function galleries(){
+      return $this->hasMany(Gallery::class);
+    }
+
+    public function comments()[
+      return $this->hasMany(Comment::class);
+    ]
+
     // Rest omitted for brevity
 
     /**

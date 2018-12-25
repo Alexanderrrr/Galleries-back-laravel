@@ -20,6 +20,12 @@ Route::group([
      Route::post('register' , 'AuthController@register');
 });
 
+Route::middleware('auth:api')->group( function () {
+  Route::resource('galleries', GalleryController::class)->except([
+    'create', 'edit'
+  ]);
+});
+
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });

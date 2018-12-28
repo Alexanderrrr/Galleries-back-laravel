@@ -21,7 +21,7 @@ class AuthController extends Controller
 
     if (!$token) {
         return response()->json([
-          'message' => 'Register First!'
+          'message' => 'You are not authorized!'
         ], 401);
     }
 

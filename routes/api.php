@@ -19,12 +19,15 @@ Route::group([
      Route::post('register' , 'AuthController@register');
 });
 
-Route::middleware('auth:api')->group( function () {
 
-});
 Route::resource('galleries', GalleriesController::class)->except([
-  'create', 'edit',
+  'create', 'edit'
 ]);
+
+Route::get('galleries/page', 'GalleriesController@index');
+Route::middleware('auth:api')->get('authors/{id}', 'AuthorController@show');
+Route::middleware('auth:api')->get('my-galleries/{user_id}', 'MyGalleriesController@show');
+
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });

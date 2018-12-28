@@ -6,17 +6,33 @@ use App\Gallery;
 use App\Image;
 use Illuminate\Http\Request;
 use App\Http\Requests\GalleryRequest;
+use Illuminate\Support\Facades\Auth;
 
 class GalleriesController extends Controller
 {
+    public function __construct()
+    {
+      $this->middleware('auth:api', ['except' => ['index', 'show']]);
+    }
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        return Gallery::latest()->paginate(10);
+        $byName = $request->input('term');
+        if (!empty($byName)) {
+            return Gallery::search($byName);
+        }
+
+        return Gallery::with([
+          'images' => function($query){
+            $query->latest();
+          },
+          'user'
+        ])
+        ->latest()->paginate(10);
     }
 
     /**
@@ -25,14 +41,14 @@ class GalleriesController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(GalleryRequest $request)
     {
-
         $gallery = Gallery::create([
           "name" => $request->name,
           "description" => $request->description,
-          "user_id" => $request->user_id
+          "user_id" => Auth::user()->id
         ]);
+
         $imagesRequest = $request->input('images');
         $images = [];
 
@@ -41,6 +57,7 @@ class GalleriesController extends Controller
           $images[] = $newImage;
         }
         $gallery->images()->saveMany($images);
+
         return $gallery;
     }
 
@@ -50,8 +67,9 @@ class GalleriesController extends Controller
      * @param  \App\Gallery  $gallery
      * @return \Illuminate\Http\Response
      */
-    public function show(Gallery $gallery)
+    public function show($id)
     {
+        $gallery = Gallery::with(['user', 'images'])->find($id);
         return $gallery;
     }
 

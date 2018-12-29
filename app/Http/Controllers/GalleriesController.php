@@ -93,9 +93,21 @@ class GalleriesController extends Controller
      * @param  \App\Gallery  $gallery
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Gallery $gallery)
+    public function update(GalleryRequest $request, Gallery $gallery)
     {
-        //
+      $gallery->update($request->only([
+        'name',
+        'description',
+      ]));
+      $imagesRequest = $request->input('images');
+      $images = [];
+
+      foreach($imagesRequest as $image){
+        $newImage = new Image($image);
+        $images[] = $newImage;
+      }
+      $gallery->images()->saveMany($images);
+      return $gallery;
     }
 
     /**
@@ -104,10 +116,13 @@ class GalleriesController extends Controller
      * @param  \App\Gallery  $gallery
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Gallery $gallery)
+    public function destroy($id)
     {
-        $gallery->delete();
-        return $gallery;
+       $gallery = Gallery::find($id);
+       $gallery->delete();
+       return response()->json([
+           'message' => 'Gallery deleted'
+       ]);
 
     }
 }

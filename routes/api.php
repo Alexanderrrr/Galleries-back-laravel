@@ -25,8 +25,8 @@ Route::resource('galleries', GalleriesController::class)->except([
 ]);
 
 Route::get('galleries/page', 'GalleriesController@index');
-Route::middleware('auth:api')->get('authors/{id}', 'AuthorController@show');
-Route::middleware('auth:api')->get('my-galleries/{user_id}', 'MyGalleriesController@show');
+Route::middleware('auth:api')->get('authors-galleries/{id}', 'AuthorGalleriesController@index');
+Route::middleware('auth:api')->get('my-galleries', 'MyGalleriesController@show');
 
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();

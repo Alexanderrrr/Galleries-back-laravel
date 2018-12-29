@@ -4,18 +4,16 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Gallery;
-use Illuminate\Support\Facades\Auth;
 
-class MyGalleriesController extends Controller
+class AuthorGalleriesController extends Controller
 {
-    public function show(Request $request)
-    {
-      $term = $request->query('term');
-      $userId = Auth::user()->id;
+    public function index(Request $request, $id){
 
+      $term = $request->query('term');
+      
       if ($term) {
         return Gallery::search($term)
-        ->where('user_id' , '=' , $userId)
+        ->where('user_id' , '=' , $id)
         ->with([
           'images' => function($query){
             $query->latest();
@@ -23,10 +21,11 @@ class MyGalleriesController extends Controller
           'user'
         ])->latest()->paginate(10);
       }
-
-      return Gallery::where('user_id' , '=' , $userId)
+      return Gallery::where('user_id' , '=' , $id)
           ->with(['images','user'])
           ->latest()
           ->paginate(10);
     }
+
+
 }

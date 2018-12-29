@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Gallery;
 use App\Image;
+use App\Comment;
 use Illuminate\Http\Request;
 use App\Http\Requests\GalleryRequest;
 use Illuminate\Support\Facades\Auth;
@@ -21,18 +22,22 @@ class GalleriesController extends Controller
      */
     public function index(Request $request)
     {
-        $byName = $request->input('term');
-        if (!empty($byName)) {
-            return Gallery::search($byName);
+        $term = $request->query('term');
+        if ($term) {
+          return Gallery::search($term)
+          ->with([
+            'images' => function($query){
+              $query->latest();
+            },
+            'user'
+          ])->latest()->paginate(10);
         }
-
         return Gallery::with([
-          'images' => function($query){
-            $query->latest();
-          },
-          'user'
-        ])
-        ->latest()->paginate(10);
+                  'images' => function($query){
+                    $query->latest();
+                  },
+                  'user'
+                ])->latest()->paginate(10);
     }
 
     /**
@@ -69,7 +74,14 @@ class GalleriesController extends Controller
      */
     public function show($id)
     {
-        $gallery = Gallery::with(['user', 'images'])->find($id);
+        $comments = Comment::where('gallery_id', '=', $id)->with('user')->get();
+        $gallery = Gallery::with([
+          'user',
+          'images',
+          'comments' => function($query){
+              $query->with('user');
+           }
+           ])->find($id);
         return $gallery;
     }
 

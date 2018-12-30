@@ -99,6 +99,7 @@ class GalleriesController extends Controller
         'name',
         'description',
       ]));
+      $gallery->images()->delete();
       $imagesRequest = $request->input('images');
       $images = [];
 
@@ -107,7 +108,7 @@ class GalleriesController extends Controller
         $images[] = $newImage;
       }
       $gallery->images()->saveMany($images);
-      return $gallery;
+      return $this->show($gallery->id);
     }
 
     /**

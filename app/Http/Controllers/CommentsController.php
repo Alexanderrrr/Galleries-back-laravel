@@ -18,7 +18,7 @@ class CommentsController extends Controller
 
       ]);
 
-      return $comment;
+      return Comment::with('user')->find($comment->id);
     }
 
     public function destroy($id)

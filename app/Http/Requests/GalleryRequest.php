@@ -30,8 +30,8 @@ class GalleryRequest extends FormRequest
         return [
             'name' => 'required|min:2|max:255',
             'description' => 'max:1000',
-            'images' => 'required|array|min:1',
-            'image.*' => 'url|image'
+            'images' => 'min:1',
+            'images.*.url' =>["regex:/^(http)?s?:?(\/\/[^\']*\.(?:png|jpg|jpeg))/"],
         ];
     }
 }

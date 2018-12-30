@@ -7,14 +7,14 @@ use Illuminate\Http\Request;
 
 class CommentsController extends Controller
 {
-    public function store(Request $request, $content){
+    public function store(Request $request, $id){
 
       $userId = auth()->user()->id;
 
       $comment = Comment::create([
         'content' => $request->content,
         'user_id' => $userId,
-        'gallery_id' => $request->id
+        'gallery_id' => $id
 
       ]);
 
